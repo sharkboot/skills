@@ -70,10 +70,10 @@ python scripts/analyze_dataset.py /path/to/dataset.jsonl [-o output_report.md] [
 
 ```
 1. 简介
-   1.1 来源
-   1.2 目标
-   1.3 应用场景
-   1.4 数据集描述（数据量、字段结构、长度统计、数据案例）
+   1.1 来源（前置文字描述 + 表格信息）
+   1.2 目标（前置文字描述 + 列表）
+   1.3 应用场景（前置文字描述 + 列表）
+   1.4 数据集描述（前置文字描述 + 表格 + 代码块示例）
 
 2. 数据集能力体系
    - 评估模型的哪些通用能力
@@ -85,7 +85,7 @@ python scripts/analyze_dataset.py /path/to/dataset.jsonl [-o output_report.md] [
 
 4. 测评
    4.1 获取模型回复（提示词模板，如果没有则为空）
-   4.2 测评方法（评估器或提示词评估，包含提示词模板）
+   4.2 测评方法（方法类型、评测指标、评分规则、提示词模板）
 ```
 
 > **提示**：可参考 [templates/dataset_report_template.md](templates/dataset_report_template.md) 模板文件，确保报告结构完整。
@@ -105,6 +105,7 @@ python scripts/analyze_dataset.py /path/to/dataset.jsonl [-o output_report.md] [
 
 报告应包含：
 - 清晰的章节结构
+- 每章节有前置文字描述，再跟表格/列表
 - 数据统计信息（数据量、分布、长度等）
 - 字段说明
 - 提示词模板（标注来源）
