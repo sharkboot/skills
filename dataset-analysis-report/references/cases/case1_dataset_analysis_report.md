@@ -1,5 +1,7 @@
 # Chinese SimpleQA 数据集分析报告
 
+---
+
 ## 1. 简介
 
 ### 1.1 来源
@@ -12,13 +14,67 @@ Chinese SimpleQA旨在解决大语言模型领域面临的**生成幻觉（hallu
 
 ### 1.3 应用场景
 
-Chinese SimpleQA的主要应用场景包括：**大语言模型事实性能力评估**——用于测评模型回答简短事实性问题的准确性；**中文知识边界探测**——通过难度筛选机制，识别模型的知识盲区；**模型对比分析**——在统一标准下比较不同模型（如GPT系列、国产模型等）在中文事实性问答上的表现；**学术研究**——支持推理scaling law、模型校准（calibration）、检索增强生成（RAG）、对齐税（alignment tax）等前沿研究问题的探索。
+Chinese SimpleQA的主要应用场景包括：
+- **大语言模型事实性能力评估**——用于测评模型回答简短事实性问题的准确性
+- **中文知识边界探测**——通过难度筛选机制，识别模型的知识盲区
+- **模型对比分析**——在统一标准下比较不同模型（如GPT系列、国产模型等）在中文事实性问答上的表现
+- **学术研究**——支持推理scaling law、模型校准（calibration）、检索增强生成（RAG）、对齐税（alignment tax）等前沿研究问题的探索
 
 ### 1.4 数据集描述
 
-Chinese SimpleQA包含**3000条**高质量的中文事实问答数据，涵盖**6大主要主题**和**99个细分子主题**。数据字段包括：id（唯一标识）、primary_category（一级分类）、secondary_category（二级分类）、question（问题）、answer（参考答案）、urls（参考来源链接）。问题平均长度约24.4个字符，最短8个字符，最长81个字符；答案平均长度约6.8个字符，最短1个字符，最长47个字符。整体呈现简短精确的特点，便于快速评测。
+#### 数据规模
+
+| 指标 | 数值 |
+|------|------|
+| 总数据量 | 3000条 |
+| 一级分类 | 6类 |
+| 二级分类 | 99类 |
+
+#### 数据字段
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| id | string | 唯一标识符 |
+| primary_category | string | 一级分类 |
+| secondary_category | string | 二级分类 |
+| question | string | 问题 |
+| answer | string | 参考答案 |
+| urls | array | 参考来源链接 |
+
+#### 长度统计
+
+| 字段 | 平均 | 最小 | 最大 |
+|------|------|------|------|
+| question | 24.4字符 | 8字符 | 81字符 |
+| answer | 6.8字符 | 1字符 | 47字符 |
+
+#### 分类分布
+
+**一级分类分布：**
+
+| 一级分类 | 数量 | 占比 |
+|----------|------|------|
+| 中华文化 | ~500 | ~16.7% |
+| 人文与社会科学 | ~500 | ~16.7% |
+| 自然科学 | ~500 | ~16.7% |
+| 工程技术与应用科学 | ~500 | ~16.7% |
+| 生活、艺术与文化 | ~500 | ~16.7% |
+| 社会 | ~500 | ~16.7% |
 
 （来源：论文Table 2数据集统计数据）
+
+#### 单条数据示例
+
+```json
+{
+  "id": "97e7f58a3b154facaa3a5c64d678c7bf",
+  "primary_category": "中华文化",
+  "secondary_category": "中医",
+  "question": "伏兔穴所属的经脉是什么？",
+  "answer": "足阳明胃经",
+  "urls": ["https://zh.wikipedia.org/wiki/...", "https://baike.baidu.com/item/..."]
+}
+```
 
 ---
 
@@ -26,12 +82,14 @@ Chinese SimpleQA包含**3000条**高质量的中文事实问答数据，涵盖**
 
 根据论文描述，Chinese SimpleQA主要评估模型的以下通用能力：
 
-- **事实性问答能力（Factuality）**：模型生成符合事实内容的能力，包括常识、世界知识和领域专业知识
-- **中文知识理解与推理能力**：模型对中文语境下各类知识内容的理解与运用能力
-- **知识边界识别能力**：通过难度筛选机制探测模型的知识盲区和能力边界
-- **自我评估与校准能力**：模型对自身回答准确性的判断能力（论文中分析了模型的校准性能）
+| 能力 | 说明 |
+|------|------|
+| 事实性问答能力 | 模型生成符合事实内容的能力，包括常识、世界知识和领域专业知识 |
+| 中文知识理解与推理能力 | 模型对中文语境下各类知识内容的理解与运用能力 |
+| 知识边界识别能力 | 通过难度筛选机制探测模型的知识盲区和能力边界 |
+| 自我评估与校准能力 | 模型对自身回答准确性的判断能力 |
 
-评测采用5个核心指标，这些指标源自OpenAI的SimpleQA评测框架：
+**评测指标：**
 
 | 指标 | 英文名称 | 说明 |
 |------|----------|------|
@@ -47,10 +105,10 @@ Chinese SimpleQA包含**3000条**高质量的中文事实问答数据，涵盖**
 
 ## 3. 数据集场景体系
 
-Chinese SimpleQA的场景体系来源于论文中的分类体系，覆盖6大主要领域和99个子主题：
+### 一级分类
 
-| 一级分类 | 包含子主题示例 |
-|----------|----------------|
+| 一级分类 | 包含子主题 |
+|----------|------------|
 | 中华文化 | 中医、中国历史、中国文学、中国神话、道教、佛教、中国Folklore等 |
 | 人文与社会科学 | 文化研究、语言学、文学、哲学、历史、人类学、社会学、心理学、新闻学、政治学、法律、教育、经济学等 |
 | 自然科学 | 天文学、物理、数学、化学、地质学、地理、气象、生物学、医学、药学、植物学、动物学等 |
@@ -64,57 +122,25 @@ Chinese SimpleQA的场景体系来源于论文中的分类体系，覆盖6大主
 
 ## 4. 测评
 
-### 4.1 测评数据介绍
+### 4.1 获取模型回复
 
-**数据集字段结构**（来自chinese_simpleqa.jsonl）：
+（无专门的提示词模板，直接将question发送给模型获取回答）
 
-```json
-{
-  "id": "97e7f58a3b154facaa3a5c64d678c7bf",
-  "primary_category": "中华文化",
-  "secondary_category": "中医",
-  "question": "伏兔穴所属的经脉是什么？",
-  "answer": "足阳明胃经",
-  "urls": ["https://zh.wikipedia.org/wiki/...", "https://baike.baidu.com/item/..."]
-}
-```
+### 4.2 测评方法
 
-各字段用途说明：
-- **id**: 唯一标识符，用于结果追踪
-- **primary_category**: 一级分类，用于按领域统计模型表现
-- **secondary_category**: 二级分类，99个细分子主题
-- **question**: 待回答的问题
-- **answer**: 参考答案
-- **urls**: 参考来源链接（通常为维基百科或百度百科）
+**方法类型**：提示词评估（LLM-as-a-Judge）
 
-**模型调用提示词模板**（来自OpenAI SimpleQA评测框架，论文引用自Wei et al., 2024）：
+**评测指标：**
 
-（来源：论文Section 2.5及OpenAI SimpleQA评测框架）
+| 指标 | 说明 |
+|------|------|
+| CO | 正确率 = 正确数 / 总数 |
+| NA | 未尝试率 = 未尝试数 / 总数 |
+| IN | 错误率 = 错误数 / 总数 |
+| CGA | 尝试正确率 = 正确数 / (正确数 + 错误数) |
+| F-score | F分数 = 2 × CGA × CO / (CGA + CO) |
 
-```
-Question: {question}
-Gold target: {target}
-Predicted answer: {predicted_answer}
-
-Grade the predicted answer of this new question as one of:
-A: CORRECT
-B: INCORRECT
-C: NOT_ATTEMPTED
-
-Just return the letters "A", "B", or "C", with no text around it.
-```
-
-### 4.2 测评方法介绍
-
-Chinese SimpleQA采用**大模型评测（LLM-as-a-Judge）**的方式进行评估，具体流程如下：
-
-1. **模型回答阶段**：将问题（question）直接发送给待评测模型，获取模型预测答案（predicted_answer）
-
-2. **评判阶段**：使用评判模型（默认gpt-4o系列）根据参考答案（target）和预测答案进行评分
-
-**评判提示词模板**（来自项目代码chinese_simpleqa_easy.py，基于OpenAI SimpleQA的GRADER_TEMPLATE优化）：
-
-（来源：chinese_simpleqa_easy.py文件中的judge_prompt变量）
+**提示词模板**：
 
 ```
 请根据给定问题、标准答案和模型预测的答案来评估模型的回答是否正确。
@@ -150,9 +176,16 @@ C:【未尝试】
 只返回字母"A"、"B"或"C"，无须添加其他文本。
 ```
 
-3. **评分计算**：根据评判结果统计各项指标
-   - CO（正确率）= 正确数 / 总数
-   - NA（未尝试率）= 未尝试数 / 总数
-   - IN（错误率）= 错误数 / 总数
-   - CGA = 正确数 / (正确数 + 错误数)
-   - F-score = 2 × CGA × CO / (CGA + CO)
+来源：chinese_simpleqa_easy.py文件中的judge_prompt变量
+
+---
+
+## 参考资料
+
+1. Chinese SimpleQA论文 - arXiv:2411.07140
+2. 数据集 - https://huggingface.co/datasets/OpenStellarTeam/Chinese-SimpleQA
+3. 项目仓库 - https://github.com/Alibaba-NLP/Chinese-SimpleQA
+
+---
+
+> *本报告基于 dataset-analysis-report skill 生成*
